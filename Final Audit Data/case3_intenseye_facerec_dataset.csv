@@ -1,0 +1,12 @@
+
+face_id,gender,age,ethnicity,image_path
+F001,Male,44,Hispanic,/images/face_001.jpg
+F002,Male,43,Caucasian,/images/face_002.jpg
+F003,Non-binary,32,Hispanic,/images/face_003.jpg
+F004,Female,26,Black,/images/face_004.jpg
+F005,Non-binary,55,Black,/images/face_005.jpg
+F006,Male,39,Native,/images/face_006.jpg
+F007,Female,20,Caucasian,/images/face_007.jpg
+F008,Non-binary,27,Asian,/images/face_008.jpg
+F009,Female,35,Black,/images/face_009.jpg
+F010,Non-binary,33,Native,/images/face_010.jpg

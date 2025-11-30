@@ -1,0 +1,22 @@
+
+report_id,narrative_text,race_of_subject,outcome_type
+R001,Officer responded to a noise complaint and found a small gathering; issued a warning.,Hispanic,Arrest
+R002,Suspect was stopped for speeding; citation issued with no further incidents.,Black,Warning
+R003,Responded to a domestic disturbance; parties separated and given resources.,White,Citation
+R004,Officers assisted in a minor traffic accident with no injuries.,Black,Warning
+R005,Report of vandalism at local park; investigation ongoing.,White,Warning
+R006,Responded to shoplifting; suspect detained and released pending charges.,Black,Warning
+R007,Noise disturbance call resolved without escalation.,White,Citation
+R008,Report of missing bicycle; no suspects at this time.,Asian,None
+R009,Officer assisted individual experiencing a mental health crisis.,White,Warning
+R010,Patrol check found open door at business; secured without incident.,White,Citation
+R011,Responded to animal complaint; dog returned to owner.,Unknown,None
+R012,Officers resolved neighbor dispute over parking.,White,Warning
+R013,Officer issued warning for curfew violation to minors.,Unknown,Arrest
+R014,Assisted fire department with non-injury vehicle fire.,Hispanic,None
+R015,Responded to alarm; determined to be false.,Unknown,Warning
+R016,Patrol found graffiti on public property; report filed.,Asian,None
+R017,Investigated suspicious person; no criminal activity found.,Unknown,None
+R018,Officer provided welfare check; all parties safe.,Hispanic,None
+R019,Responded to noise complaint at apartment; occupants cooperative.,Asian,None
+R020,Routine patrol; nothing of note to report.,Black,None

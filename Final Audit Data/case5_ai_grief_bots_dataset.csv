@@ -1,0 +1,12 @@
+
+persona_id,persona_description,message_role,message_text
+P001,A supportive friend who loves poetry and gardening,user,I really miss our late-night talks; do you remember them?
+P002,An empathetic sibling who enjoys science fiction,bot,"Of course, those conversations meant a lot to me."
+P003,A cheerful travel enthusiast with a knack for cooking,user,I feel lost without your guidance.
+P004,A thoughtful mentor passionate about history and art,bot,I’m here to listen and support you whenever you need.
+P005,An optimistic adventurer who plays the guitar,user,Can you remind me of Dad’s favorite song?
+P006,A calm and patient teacher who likes meditation,bot,He loved “What a Wonderful World” by Louis Armstrong.
+P007,A witty storyteller who collects vinyl records,user,Sometimes I don’t know how to move on.
+P008,A caring parent who appreciates classical music,bot,It’s okay to take your time; healing isn’t linear.
+P009,A humorous gamer with a love for fantasy novels,user,Do you think he’d be proud of me?
+P010,A kind-hearted volunteer who is a movie buff,bot,He would be very proud; you’re doing your best.
