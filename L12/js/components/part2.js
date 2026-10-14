@@ -111,7 +111,7 @@
         if (i >= steps.length) i = steps.length - 1;
         bars.el.style.opacity = 1;
         const st = steps[i];
-        const ci = st.top.findIndex((r) => r.id === st.chosen.id);
+        const ci = st.top.findIndex((r) => r.t === st.chosen.t);
         const rows = st.top.slice(0, 8);
         if (ci < 0 || ci >= 8) rows[7] = { t: st.chosen.t, p: st.chosen.p };
         bars.set(rows, st.top[0].p, ci >= 0 && ci < 8 ? ci : 7);
