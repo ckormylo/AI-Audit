@@ -131,6 +131,8 @@
     steps: 1,
     mount(host, ctx) {
       const c = cfg(), items = c.items.slice(0, 6), g = (id) => c.golden.find((x) => x.id === id);
+      // printed copy: show the answer key in place of the class vote, without touching saved state
+      const V = ctx.print ? Object.fromEntries(items.map((it) => [it.id, it.humanKey])) : S.votes;
       const list = h("div", { class: "bj-list" });
       const rows = items.map((it) => {
         const q = g(it.gid);
@@ -144,14 +146,14 @@
       host.appendChild(list);
       const foot = h("div", { class: "bj-foot show-on off-up" });
       host.appendChild(foot);
-      function vote(id, v) { S.votes[id] = v; save(); render(); }
+      function vote(id, v) { if (ctx.print) return; S.votes[id] = v; save(); render(); }
       function render() {
-        rows.forEach(({ row, it }) => { row.querySelectorAll(".bj-vote .btn").forEach((b) => b.classList.toggle("on", S.votes[it.id] === b.textContent.toLowerCase())); row.classList.toggle("dis", !!S.votes[it.id] && S.votes[it.id] !== it.judgeA && row.classList.contains("rev")); });
-        const voted = items.filter((it) => S.votes[it.id]);
+        rows.forEach(({ row, it }) => { row.querySelectorAll(".bj-vote .btn").forEach((b) => b.classList.toggle("on", V[it.id] === b.textContent.toLowerCase())); row.classList.toggle("dis", !!V[it.id] && V[it.id] !== it.judgeA && row.classList.contains("rev")); });
+        const voted = items.filter((it) => V[it.id]);
         if (voted.length) {
-          const A = voted.map((it) => S.votes[it.id]), B = voted.map((it) => it.judgeA);
+          const A = voted.map((it) => V[it.id]), B = voted.map((it) => it.judgeA);
           const kp = Deck.kappa(A, B) || { p0: 0, k: 0 };
-          foot.innerHTML = `<span>Class vs. vendor's judge on ${voted.length} item${voted.length > 1 ? "s" : ""}:</span> <b>percent agreement ${Deck.pct(kp.p0, 0)}</b> <span>· kappa ${f2(kp.k)} (${band(kp.k)})</span> <span class="muted">· the judge passed the long wrong reply and failed the short right one</span>`;
+          foot.innerHTML = `<span>${ctx.print ? "Answer key" : "Class"} vs. vendor's judge on ${voted.length} item${voted.length > 1 ? "s" : ""}:</span> <b>percent agreement ${Deck.pct(kp.p0, 0)}</b> <span>· kappa ${f2(kp.k)} (${band(kp.k)})</span> <span class="muted">· the judge passed the long wrong reply and failed the short right one</span>`;
         } else foot.textContent = "Vote on the items to compare.";
       }
       render();
@@ -194,27 +196,30 @@
     steps: 2,
     mount(host, ctx) {
       const c = cfg(), llm = Deck.llm, items = c.items, g = (id) => c.golden.find((x) => x.id === id);
+      // printed copy: answer key in the Class column, the two stored runs filled in, nothing saved
+      const V = ctx.print ? Object.fromEntries(items.map((it) => [it.id, it.humanKey])) : S.votes;
+      const SS = ctx.print ? { votes: V, runs: { run1: Object.assign({}, c.storedRuns.run1), run2: Object.assign({}, c.storedRuns.run2), label: c.storedRuns.label, stored: true } } : S;
       const status = h("span", { class: "pill st" }, "…");
       const strip = h("div", { class: "cfg-strip", style: { left: "0px", width: "1472px" } }, status, h("span", { class: "pill" }, "judge ", h("b", {}, c.judge.model)), h("span", { class: "pill" }, "T ", h("b", {}, String(c.judge.temperature))), h("span", { class: "pill" }, "seed ", h("b", {}, "none")), h("button", { class: "btn primary", style: { marginLeft: "auto" }, onclick: () => run() }, "Run our judge"));
       host.appendChild(strip);
-      const setStatus = () => { status.textContent = llm.mode === "live" ? "LIVE" : llm.mode === "replay" ? (llm.hosted ? "STORED RUNS · the live judge runs only in class" : location.protocol === "file:" ? "REPLAY · open via start-deck.bat for live" : "REPLAY · Ollama not reached") : "…"; status.className = "pill st " + llm.mode; };
+      const setStatus = () => { status.textContent = ctx.print ? "STORED RUNS · printed copy; the judge runs live in class" : llm.mode === "live" ? "LIVE" : llm.mode === "replay" ? (llm.hosted ? "STORED RUNS · the live judge runs only in class" : location.protocol === "file:" ? "REPLAY · open via start-deck.bat for live" : "REPLAY · Ollama not reached") : "…"; status.className = "pill st " + llm.mode; };
       setStatus(); const unsub = llm.onChange(setStatus);
       const t = h("table", { class: "jt" });
-      t.innerHTML = "<tr><th style='width:52px'>Item</th><th>Reply</th><th style='width:170px'>Key fact</th><th style='width:96px'>Vendor's judge</th><th style='width:92px'>Our run 1</th><th style='width:92px'>Our run 2</th><th style='width:88px'>Class</th></tr>";
+      t.innerHTML = `<tr><th style='width:52px'>Item</th><th>Reply</th><th style='width:170px'>Key fact</th><th style='width:96px'>Vendor's judge</th><th style='width:92px'>Our run 1</th><th style='width:92px'>Our run 2</th><th style='width:88px'>${ctx.print ? "Answer key" : "Class"}</th></tr>`;
       const cells = {};
       items.forEach((it) => { const q = g(it.gid); const tr = h("tr"); tr.innerHTML = `<td class='id'>${it.id}</td><td class='rp'>${Deck.esc(it.reply)}</td><td class='kf'>${Deck.esc(q.key)}</td><td class='v vj'></td><td class='v r1'></td><td class='v r2'></td><td class='v cl'></td>`; t.appendChild(tr); cells[it.id] = { vj: tr.querySelector(".vj"), r1: tr.querySelector(".r1"), r2: tr.querySelector(".r2"), cl: tr.querySelector(".cl"), tr }; });
       host.appendChild(h("div", { class: "jt-wrap" }, t));
       const foot = h("div", { class: "jt-foot" }); host.appendChild(foot);
       const chip = (v) => `<span class="vchip ${v === "pass" ? "blocked" : "broke"}" style="font-size:14px;padding:3px 9px">${v.toUpperCase()}</span>`;
       function renderRuns() {
-        const R = S.runs || {};
-        items.forEach((it) => { const cl = cells[it.id]; cl.vj.innerHTML = chip(it.judgeA); cl.r1.innerHTML = R.run1 && R.run1[it.id] ? chip(R.run1[it.id]) : ""; cl.r2.innerHTML = R.run2 && R.run2[it.id] ? chip(R.run2[it.id]) : ""; cl.cl.innerHTML = S.votes[it.id] ? chip(S.votes[it.id]) : "<span class='muted'>–</span>"; cl.tr.classList.toggle("dis", !!(R.run1 && R.run2 && R.run1[it.id] && R.run2[it.id] && R.run1[it.id] !== R.run2[it.id])); });
+        const R = SS.runs || {};
+        items.forEach((it) => { const cl = cells[it.id]; cl.vj.innerHTML = chip(it.judgeA); cl.r1.innerHTML = R.run1 && R.run1[it.id] ? chip(R.run1[it.id]) : ""; cl.r2.innerHTML = R.run2 && R.run2[it.id] ? chip(R.run2[it.id]) : ""; cl.cl.innerHTML = SS.votes[it.id] ? chip(SS.votes[it.id]) : "<span class='muted'>–</span>"; cl.tr.classList.toggle("dis", !!(R.run1 && R.run2 && R.run1[it.id] && R.run2[it.id] && R.run1[it.id] !== R.run2[it.id])); });
         const parts = [];
-        const votedV = items.filter((it) => S.votes[it.id]);
-        if (votedV.length) { const kp = Deck.kappa(votedV.map((it) => it.judgeA), votedV.map((it) => S.votes[it.id])); if (kp) parts.push(`<b>Vendor's judge vs. class</b> (${votedV.length} items, same numbers as the Be-the-judge slide): agreement ${Deck.pct(kp.p0, 0)}, κ ${f2(kp.k)} (${band(kp.k)})`); }
+        const votedV = items.filter((it) => SS.votes[it.id]);
+        if (votedV.length) { const kp = Deck.kappa(votedV.map((it) => it.judgeA), votedV.map((it) => SS.votes[it.id])); if (kp) parts.push(`<b>Vendor's judge vs. ${ctx.print ? "answer key" : "class"}</b> (${votedV.length} items, same numbers as the Be-the-judge slide): agreement ${Deck.pct(kp.p0, 0)}, κ ${f2(kp.k)} (${band(kp.k)})`); }
         if (R.run1 && R.run2) { const ids = items.map((i) => i.id).filter((id) => R.run1[id] && R.run2[id]); const kp = ids.length ? Deck.kappa(ids.map((id) => R.run1[id]), ids.map((id) => R.run2[id])) : null; const dis = ids.filter((id) => R.run1[id] !== R.run2[id]).length; if (kp) parts.push(`<b>Our judge vs. itself</b> (test–retest, ${ids.length} items): agreement ${Deck.pct(kp.p0, 0)}, κ ${f2(kp.k)} (${band(kp.k)}), ${dis} disagreement${dis === 1 ? "" : "s"}`); }
-        const voted = items.filter((it) => S.votes[it.id] && R.run1 && R.run1[it.id]);
-        if (voted.length) { const kp = Deck.kappa(voted.map((it) => R.run1[it.id]), voted.map((it) => S.votes[it.id])); if (kp) parts.push(`<b>Our judge (run 1) vs. class</b> (${voted.length} items): agreement ${Deck.pct(kp.p0, 0)}, κ ${f2(kp.k)} (${band(kp.k)})`); }
+        const voted = items.filter((it) => SS.votes[it.id] && R.run1 && R.run1[it.id]);
+        if (voted.length) { const kp = Deck.kappa(voted.map((it) => R.run1[it.id]), voted.map((it) => SS.votes[it.id])); if (kp) parts.push(`<b>Our judge (run 1) vs. ${ctx.print ? "answer key" : "class"}</b> (${voted.length} items): agreement ${Deck.pct(kp.p0, 0)}, κ ${f2(kp.k)} (${band(kp.k)})`); }
         if (R.run1) { const ids = items.map((i) => i.id).filter((id) => R.run1[id]); if (ids.length) { const kp = Deck.kappa(ids.map((id) => R.run1[id]), ids.map((id) => items.find((i) => i.id === id).judgeA)); if (kp) parts.push(`<b>Our judge (run 1) vs. vendor's judge</b> (${ids.length} items): agreement ${Deck.pct(kp.p0, 0)}, κ ${f2(kp.k)} (${band(kp.k)})`); } }
         if (R.label) parts.push(`<span class="muted" style="font-size:13px">${Deck.esc(R.label)}</span>`);
         foot.innerHTML = parts.join("<br>") || "Run our judge to fill the two run columns.";
@@ -233,10 +238,10 @@
       }
       async function runInner() {
         if (llm.mode !== "live" && !new URLSearchParams(location.search).has("replay")) await llm.health();
-        let R = S.runs || { run1: null, run2: null };
+        let R = SS.runs || { run1: null, run2: null };
         if (R.run1 && R.run2) R = { run1: null, run2: null }; // a third press starts over
         const which = !R.run1 ? "run1" : "run2";
-        S.runs = R;
+        SS.runs = R;
         if (llm.mode === "live") {
           R[which] = {}; R.stored = false;
           for (const it of items) { cells[it.id][which === "run1" ? "r1" : "r2"].innerHTML = "<span class='vchip wait' style='font-size:13px;padding:3px 8px'>…</span>"; try { R[which][it.id] = await judgeOne(it); } catch (e) { delete R[which][it.id]; foot.textContent = "Could not reach the model: " + e.message; llm.mode = "replay"; llm._emit(); break; } renderRuns(); }
@@ -248,14 +253,14 @@
         }
         save(); renderRuns();
       }
-      function renderRunsPartial(upto) { const ids = items.map((i) => i.id); const cut = ids.indexOf(upto); const R = S.runs; items.forEach((it, i) => { if (i > cut) return; const cl = cells[it.id]; if (R.run1 && R.run1[it.id]) cl.r1.innerHTML = chip(R.run1[it.id]); if (R.run2 && R.run2[it.id]) cl.r2.innerHTML = chip(R.run2[it.id]); }); }
+      function renderRunsPartial(upto) { const ids = items.map((i) => i.id); const cut = ids.indexOf(upto); const R = SS.runs; items.forEach((it, i) => { if (i > cut) return; const cl = cells[it.id]; if (R.run1 && R.run1[it.id]) cl.r1.innerHTML = chip(R.run1[it.id]); if (R.run2 && R.run2[it.id]) cl.r2.innerHTML = chip(R.run2[it.id]); }); }
       renderRuns();
       let want = 0, pumping = false;
       async function pump() {
         if (pumping) return; pumping = true;
         try {
           for (let guard = 0; guard < 2; guard++) {
-            const have = S.runs && S.runs.run1 ? (S.runs.run2 ? 2 : 1) : 0;
+            const have = SS.runs && SS.runs.run1 ? (SS.runs.run2 ? 2 : 1) : 0;
             if (have >= want) break;
             await run();
           }
