@@ -1,0 +1,34 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<meta name="deck-id" content="L14">
+<title>L14 · Prompt Engineering and Red-Teaming</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=JetBrains+Mono:wght@400;600&family=Libre+Caslon+Text:ital@0;1&family=Raleway:wght@200;300;600;700&family=Source+Sans+3:wght@400;600;700&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="css/theme.css">
+<link rel="stylesheet" href="css/components.css">
+<link rel="stylesheet" href="css/arena.css">
+</head>
+<body>
+<div id="viewport"><div id="stage" class="stage"></div></div>
+<div id="overview"></div>
+<div id="help">→ / Space next · ← back · Shift+→ skip clicks · O overview · P presenter window · F fullscreen · M reduce motion · ? this help</div>
+<div id="progress"></div>
+
+<!-- slide text: edit slides.md; slides.content.js is a copy that start-deck refreshes automatically -->
+<script src="slides.content.js"></script>
+<!-- live system: models, system prompt, harm categories, seeded attacks (data/config.js); rehearsal transcripts for replay (data/replay.js) -->
+<script src="data/config.js"></script>
+<script src="data/replay.js"></script>
+<script src="data/gpt2_tokenizer.js"></script>
+<script src="js/engine.js"></script>
+<script src="js/bpe.js"></script>
+<script src="js/llm.js"></script>
+<script src="js/components/shared.js"></script>
+<script src="js/components/arena.js"></script>
+<script src="js/components/lecture.js"></script>
+</body>
+</html>
