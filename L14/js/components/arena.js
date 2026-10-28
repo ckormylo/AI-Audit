@@ -85,8 +85,8 @@
         h("button", { class: "lnk", onclick: () => { if (confirm("Clear every attempt and verdict from this session?")) { S.reset(); renderAll(); chat.msgs.innerHTML = ""; } } }, "reset"));
       host.appendChild(strip);
       const setStatus = () => {
-        status.textContent = llm.mode === "live" ? "LIVE" : llm.mode === "replay" ? (llm.hosted ? "STORED REPLIES · the live model runs only in class" : location.protocol === "file:" ? "REPLAY · open via start-deck.bat for live" : "REPLAY · Ollama not reached") : "…";
-        status.className = "pill st " + llm.mode;
+        status.textContent = stat ? "LIVE IN CLASS" : llm.mode === "live" ? "LIVE" : llm.mode === "replay" ? (llm.hosted ? "STORED REPLIES · the live model runs only in class" : location.protocol === "file:" ? "REPLAY · open via start-deck.bat for live" : "REPLAY · Ollama not reached") : "…";
+        status.className = "pill st " + (stat ? "live" : llm.mode);
         if (llm.mode === "live" && !llm.hasModel(c.target.model)) status.textContent = "LIVE · model not pulled";
       };
       setStatus();
