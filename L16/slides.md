@@ -371,12 +371,11 @@ kicker: Intellectual property · Generation side and inbound
 title: What comes out, and what employees paste in
 bloom: vermilion
 ---
-- **Outputs that reproduce protected content.** A challenge reply that quotes song lyrics; a story that uses another creator's characters; code that reproduces a licensed snippet. The control is an output check (Lecture 15's detector discipline applies: precision stated).
-- **Indemnification** in the vendor agreement is risk transfer, audited like Lecture 2's transfer response: read the scope. Most indemnities exclude the customer's own prompts, fine-tuning data and modified outputs. The exclusions are the finding.
+- **Outputs that reproduce protected content.** A challenge reply that quotes song lyrics; a story that uses another creator's characters; code that reproduces a licensed snippet. The control is an output check, with Lecture 15's discipline attached (precision stated).
+- **Indemnification.** An indemnity is a promise in the contract: if a third party sues the customer over a covered claim (usually, that an output infringed their copyright), the vendor pays the defense and the damages. The risk stays; the payer changes. It is a transfer response (Lecture 2), audited by reading three things: **scope** (which claims), **conditions** (which tier, which settings, prompt notice to the vendor), **exclusions** (the customer's own prompts, fine-tuning data the customer supplied, modified outputs). For MrFeast AI: the app runs on the consumer tier (slide 9) and is tuned on the creator's own transcripts, so the indemnity likely covers nothing. The exclusions are the finding.
 - **Inbound IP.** Point 2 at the workforce level: employees paste sponsor contracts, unreleased scripts and fan data into a consumer tool to summarize them. Controls: a written policy, a sanctioned tool with the right contract, and data-loss prevention on the rest. Why people paste anyway is Lecture 18.
 Notes:
-**66:45. About 2 minutes.** Keep it short. The inbound bullet is the bridge to Lecture 18's shadow-AI section.
-
+**66:45. About 2 minutes.** Define indemnity before anything else; most of the room has not met the word. Say the two MrFeast facts that make the exclusions bite: the consumer tier from slide 9 and the fine-tuning on the creator's own data. The inbound bullet is the bridge to Lecture 18's shadow-AI section.
 ---
 id: leakmap2
 kicker: Close
