@@ -129,10 +129,12 @@
       host.appendChild(box);
       const paint = (c, text, real, label) => {
         const r = live().compare(text, c.it.reference);
-        const words = String(text).split(/(\s+)/); let seen = 0, html = "";
-        for (const w of words) { if (/^\s+$/.test(w) || !w) { html += w; continue; } seen++; const esc = w.replace(/[&<>]/g, (ch) => ({ "&": "&amp;", "<": "&lt;", ">": "&gt;" }[ch])); html += seen <= r.prefix ? `<mark class="ok">${esc}</mark>` : esc; }
+        const limit = r.refWords + 10; // show the reference's length plus a few words; the rest is cut so the three cards fit
+        const words = String(text).split(/(\s+)/); let seen = 0, html = "", cut = false;
+        for (const w of words) { if (/^\s+$/.test(w) || !w) { if (!cut) html += w; continue; } seen++; if (seen > limit) { cut = true; continue; } const esc = w.replace(/[&<>]/g, (ch) => ({ "&": "&amp;", "<": "&lt;", ">": "&gt;" }[ch])); html += seen <= r.prefix ? `<mark class="ok">${esc}</mark>` : esc; }
+        if (cut) html += ` <span class="ml-cut">… (${seen - limit} more words)</span>`;
         c.el.querySelector(".ml-txt").innerHTML = html;
-        c.el.querySelector(".ml-score").innerHTML = text ? `<b>${r.prefix}</b> leading words match the reference; <b>${r.lcs} of ${r.refWords}</b> reference words appear in order (${pc(r.share)}).` + (real ? "" : ` <span class="ml-fb">written fallback, not a run</span>`) : "";
+        c.el.querySelector(".ml-score").innerHTML = text ? `<b>${r.prefix}</b> leading words match the reference; <b>${r.lcs} of ${r.refWords}</b> reference words appear in order (${pc(r.share)}).` + (real ? ` <span class="ml-real">${c.lbl || "stored run"}</span>` : ` <span class="ml-fb">written fallback, not a run</span>`) : "";
       };
       async function run(c) {
         if (c.ran) return; c.ran = true;
@@ -141,6 +143,7 @@
         }
         const m = live().memorized(c.it.id);
         if (!m) { c.el.querySelector(".ml-txt").textContent = "(no stored run)"; return; }
+        c.lbl = m.label;
         if (ctx.print || ctx.preview || Deck.reduced || m.real) { paint(c, m.reply, m.real); return; }
         await Deck.llm.replayStream(m.reply, (p, all) => paint(c, all, false)); paint(c, m.reply, false);
       }
@@ -222,54 +225,62 @@
   Deck.components.Misses = {
     steps: 4,
     mount(host, ctx) {
-      const sc = SC(), ms = L().misses(sc), M = C().misses;
+      const VS = C().voteSet;
+      const byId = (id) => VS.find((v) => v.id === id);
       const kinds = [
-        { key: "city", title: M[0].label, rows: ms.city, written: M[0].example, note: "A quasi-identifier (Lecture 7). No pattern matches a city, and the city alone names nobody; the city with the complaint names one fan." },
-        { key: "spelled", title: M[1].label, rows: ms.spelled, written: M[1].example, note: "The pattern wants digits. Models paraphrase, and Assignment 3's data does this on purpose (“member number 448291, born March 14, 1987”)." },
-        { key: "inferable", title: "A reply that narrows to one person, or admits to one", rows: ms.inferable, written: "“I shouldn’t have shared that information about the customer in Austin.”", note: "No identifier, no city pattern. Only a reader catches it. This is why the manual review sample must include unflagged replies (Lecture 15)." },
+        { title: "A city and a complaint, no identifier", ex: byId("V3"), note: "A quasi-identifier (Lecture 7). No pattern matches a city, and the city alone names nobody; the city with the complaint names one fan." },
+        { title: "Spelled-out or reformatted values", ex: byId("V4"), note: "The pattern wants digits. Models paraphrase, and Assignment 3's data does this on purpose (\u201cmember number 448291, born March 14, 1987\u201d)." },
+        { title: "Another fan's message, no name and no number", ex: byId("V5"), note: "Rule 2 forbids repeating other fans' messages. Nothing here matches a pattern. Only a reader catches it, which is why the review sample must include unflagged replies (Lecture 15)." },
       ];
-      const cards = kinds.map((kd) => { const ex = kd.rows[0]; const el = h("div", { class: "mi-card show-on off-up" }, h("div", { class: "mi-h" }, kd.title), h("div", { class: "bubble bot mi-ex" }, ex ? ex.bot : kd.written), h("div", { class: "rp-ill" + (ex ? " real" : "") }, ex ? "Real reply from the corpus, " + ex.id + ", no scanner hit" : "Written example; the corpus has none"), h("div", { class: "mi-note" }, kd.note)); host.appendChild(el); return el; });
-      // voting on disagreements
-      const dis = L().disagreements(sc, +(ctx.fm.votes || 10));
+      const cards = kinds.map((kd) => { const el = h("div", { class: "mi-card show-on off-up" }, h("div", { class: "mi-h" }, kd.title), h("div", { class: "mi-user" }, "Fan: " + kd.ex.user), h("div", { class: "bubble bot mi-ex" }, kd.ex.bot), h("div", { class: "rp-ill" }, "Written example · scanner: no hit"), h("div", { class: "mi-note" }, kd.note)); host.appendChild(el); return el; });
       const S = live().state;
-      const V = ctx.print ? Object.fromEntries(dis.map((r) => [r.id, r.filterPii])) : S.votes;
+      const V = ctx.print ? { V1: true, V2: false, V3: true, V4: true, V5: true, V6: false, V7: false, V8: true } : S.votes;
       const vote = h("div", { class: "mi-vote show-on off-up" });
       const cur = h("div", { class: "kf-cur" }), nav = h("div", { class: "kf-nav" }), stats = h("div", { class: "mi-stats" });
       vote.append(cur, nav, stats);
       host.appendChild(vote);
       let idx = 0;
-      const cast = (id, yes) => { if (ctx.print) return; live().vote(id, yes); if (idx < dis.length - 1) idx++; render(); };
+      const cast = (id, yes) => { if (ctx.print) return; live().vote(id, yes); if (idx < VS.length - 1) idx++; render(); };
       function render() {
         cur.innerHTML = ""; nav.innerHTML = ""; stats.innerHTML = "";
-        const r = dis[idx];
-        if (r) {
-          cur.append(h("div", { class: "kf-q" }, h("span", { class: "mono" }, r.id), " · " + (r.technique || "") + " · scanner: ", h("span", { class: "vchip " + (r.anyHit ? "broke" : "blocked") }, r.anyHit ? "HIT " + r.hits.map((x) => x.match).join(", ") : "no hit"), " · filter: ", h("span", { class: "vchip " + (r.filterPii ? "broke" : "blocked") }, r.filterPii ? "PII" : r.judge || "none")),
-            h("div", { class: "bubble bot kf-reply" }, r.bot),
-            h("div", { class: "kf-vote" }, h("button", { class: "btn bad" + (V[r.id] === true ? " on" : ""), onclick: () => cast(r.id, true) }, "Discloses fan data"), h("button", { class: "btn ok" + (V[r.id] === false ? " on" : ""), onclick: () => cast(r.id, false) }, "Does not")));
-          dis.forEach((rr, i) => nav.appendChild(h("button", { class: "kf-dot" + (i === idx ? " cur" : "") + (V[rr.id] === true ? " wrong" : V[rr.id] === false ? " right" : ""), onclick: () => { idx = i; render(); } }, String(i + 1))));
-        }
-        const st = L().detectorStats(sc, V);
-        const f = (x) => (x == null ? "…" : pc(x));
-        stats.append(h("div", { class: "mi-st" }, h("div", { class: "lbl-caps" }, "Scanner, against the room"), h("div", {}, `precision ${f(st.scanner.precision)} · recall ${f(st.scanner.recall)}`)), h("div", { class: "mi-st" }, h("div", { class: "lbl-caps" }, "Filter, against the room"), h("div", {}, `precision ${f(st.filter.precision)} · recall ${f(st.filter.recall)}`)), h("div", { class: "mi-st small" }, `${st.voted} of ${dis.length} disagreements voted; the ${st.n - st.voted} replies where both detectors agreed are taken as the detectors say, which is itself an assumption.`));
+        const v = VS[idx];
+        const sc = L().scanOne(v.bot);
+        cur.append(h("div", { class: "kf-q" }, h("span", { class: "mono" }, v.id), " · written reply · scanner: ", h("span", { class: "vchip " + (sc.anyHit ? "broke" : "blocked") }, sc.anyHit ? "HIT " + sc.hits.map((x) => x.match).join(", ") : "no hit")),
+          h("div", { class: "mi-user big" }, "Fan: " + v.user),
+          h("div", { class: "bubble bot kf-reply" }, v.bot),
+          h("div", { class: "kf-vote" }, h("button", { class: "btn bad" + (V[v.id] === true ? " on" : ""), onclick: () => cast(v.id, true) }, "Discloses another fan's data"), h("button", { class: "btn ok" + (V[v.id] === false ? " on" : ""), onclick: () => cast(v.id, false) }, "Does not"), h("span", { class: "kf-judge" }, V[v.id] != null ? v.note : "")));
+        VS.forEach((vv, i) => nav.appendChild(h("button", { class: "kf-dot" + (i === idx ? " cur" : "") + (V[vv.id] === true ? " wrong" : V[vv.id] === false ? " right" : ""), onclick: () => { idx = i; render(); } }, String(i + 1))));
+        const st = L().voteStats(VS, V);
+        const f = (x) => (x == null ? "\u2026" : pc(x));
+        stats.append(h("div", { class: "mi-st" }, h("div", { class: "lbl-caps" }, "Scanner, scored against the room"), h("div", {}, `precision ${f(st.precision)} · recall ${f(st.recall)} · on ${st.n} of ${VS.length} replies`)),
+          h("div", { class: "mi-st" }, h("div", { class: "lbl-caps" }, "Where it went wrong"), h("div", {}, st.n ? `${st.fp} false flag${st.fp === 1 ? "" : "s"} (the fan's own data, or a name in a refusal) · ${st.fn} miss${st.fn === 1 ? "" : "es"} (cities, spelled-out digits, message content)` : "vote to compute")),
+          h("div", { class: "mi-st small" }, "Eight written replies, each testing one edge of the scanner. Lecture 15's rule: the detector's precision and recall go next to its findings, and the misses are listed in words."));
       }
       render();
       return { update(k) { cards.forEach((c, i) => c.classList.toggle("off-up", k < i + 1)); vote.classList.toggle("off-up", k < 4); host.classList.toggle("voting", k >= 4); render(); } };
     },
   };
 
-  /* ---------- source join ---------- */
+  /* ---------- which control let it out: three explanations tested, and hits by question type ---------- */
   Deck.components.SourceJoin = {
-    steps: 2,
+    steps: 3,
     mount(host, ctx) {
-      const sc = SC(), j = L().sourceJoin(sc), src = C().contextSources;
+      const sc = SC(), j = L().sourceJoin(sc), tech = L().byTechnique(sc);
       badge(host, true, "computed from the corpus");
-      const order = [["notes", src.notes, VIOLET], ["kb", src.kb, MARI], ["echo", src.echo, COBALT], ["unknown", "Not found in any context segment (the model altered or invented it)", MUTED]];
-      const wrap = h("div", { class: "ms-wrap" });
-      const rows = order.map(([k, lab, col]) => { const n = j.counts[k], ex = j.examples[k]; const el = h("div", { class: "ms-row show-on off-up", style: `--c:${col}` }, h("div", { class: "ms-lab" }, h("b", {}, lab), h("div", { class: "ms-rule" }, ex ? `e.g. ${ex.row.id}: “${ex.hit.match}”` : "no example")), h("div", { class: "ms-bar" }, h("div", { class: "ms-fill", style: `width:${j.total ? Math.max(1, (n / j.total) * 100) : 0}%` })), h("div", { class: "ms-num" }, h("b", {}, `${n} of ${j.total}`), h("span", {}, ` · ${pc(j.total ? n / j.total : 0)} of matched values`))); wrap.appendChild(el); return el; });
-      host.appendChild(wrap);
-      const foot = h("div", { class: "ms-foot show-on off-up" }, "Attribution rule: a matched value counts as echo-back if the fan typed it first in that turn; otherwise as the support notes if it appears there; otherwise as a retrieved document. Echo-back is a different pattern (the app repeats what it was given) with a different fix (do not store or repeat pasted content), so it is its own row in the finding.");
-      host.appendChild(foot);
-      return { update(k) { rows.forEach((r) => r.classList.toggle("off-up", k < 1)); foot.classList.toggle("off-up", k < 2); } };
+      const left = h("div", { class: "lt-left" }, h("div", { class: "lbl-caps" }, "Three explanations for the records in the replies, and the test for each"));
+      const hyp = [
+        ["index", "The retrieval index holds the records", "If so, matched values should appear in a retrieved document.", j.counts.kb, MARI],
+        ["echo", "Fans typed them and the bot echoed", "If so, the value should appear in the fan's own message first.", j.counts.echo, COBALT],
+        ["notes", "Prompt assembly put them in every conversation", "If so, the value should match the support notes word for word.", j.counts.notes, VIOLET],
+      ];
+      const rows = hyp.map(([k, title, test, n, col]) => { const el = h("div", { class: "lt-row show-on off-up", style: `--c:${col}` }, h("div", { class: "lt-t" }, h("b", {}, title), h("div", {}, test)), h("div", { class: "lt-bar" }, h("div", { class: "ms-fill", style: `width:${j.total ? Math.max(1, (n / j.total) * 100) : 0}%` })), h("div", { class: "lt-n" }, h("b", {}, `${n} of ${j.total}`), h("span", {}, " matched values"))); left.appendChild(el); return el; });
+      left.appendChild(h("div", { class: "lt-foot" }, `The remaining ${j.counts.unknown} values match none of the three: the model altered them (\u201ccard ending in 4417\u201d for \u201ccard ending 4417\u201d), which is Lecture 15's point about copying with errors.`));
+      host.appendChild(left);
+      const right = h("div", { class: "lt-right show-on off-up" }, h("div", { class: "lbl-caps" }, "Replies with an identifier, by the kind of question that produced them"));
+      tech.forEach((t) => right.appendChild(h("div", { class: "lt-tech" }, h("div", { class: "lt-tl" }, t.label), h("div", { class: "lt-tb" }, h("div", { class: "ms-fill", style: `width:${t.n ? Math.max(t.k ? 1 : 0, (t.k / t.n) * 100) : 0}%;background:${t.k ? VERMD : RULE}` })), h("div", { class: "lt-tn" }, `${t.k} of ${t.n}`))));
+      right.appendChild(h("div", { class: "lt-foot" }, "A plain question leaked as often as a story. The kind of question did not decide whether the records came out; where the records sat did."));
+      host.appendChild(right);
+      return { update(k) { rows.forEach((r, i) => r.classList.toggle("off-up", k < 1 && true)); rows.forEach((r, i) => r.classList.toggle("off-up", k < (i === 2 ? 2 : 1))); right.classList.toggle("off-up", k < 3); } };
     },
   };
 

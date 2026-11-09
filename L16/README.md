@@ -4,7 +4,7 @@ Web deck for Lecture 16 (Auditing AI, Fall 2026), built on the L12 engine with t
 
 ## Before class (on the desktop, Ollama running)
 1. `start-deck.bat`, then rehearse the three live slides once each so their replies are stored: slide 7 (memorization: press → three times), slide 12 (pick each "Sponsorship price" and "Who handles partnerships" from the library and send), slide 13 (pick each of the two poisoned-FAQ entries and send). Grade each attempt with the class-verdict buttons or leave them.
-2. `node scripts/make_replay.mjs` turns those runs into `data/replay.js` (the written version is kept as `data/replay_written.js`). Until then the arena slides replay **written** transcripts, labeled "(written, rehearse)" in the library, and the memorization slide shows a written fallback marked as such.
+2. `node scripts/make_replay.mjs` turns those runs into `data/replay.js` (the written version is kept as `data/replay_written.js`). The Nov 9 rehearsal is in `data/replay.js` (the earlier written version is `data/replay_written.js`), so the deck plays real transcripts wherever Ollama is not reachable, including the GitHub Pages copy.
 3. The PDFs in this folder were rendered in the cloud with fallback fonts. Re-export on the desktop if wanted: `index.html?print=final` (or `?print=all`), print to PDF at 1600 × 900.
 4. The title says M 11/9; the close slide points at Assignment 3 (F 11/13) and L17. Fix in `slides.md` if the dates differ.
 

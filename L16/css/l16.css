@@ -112,3 +112,29 @@
 
 /* finding extra */
 .fd-weak { position: relative; background: #fff; border: 1px solid var(--rule); border-radius: 10px; padding: 10px 18px; font-size: 17px; line-height: 1.4; box-shadow: 0 0 0 4px #FBE0D8; margin-top: 4px; }
+
+/* fixes Nov 9 */
+.ml-cut { color: var(--muted); font-size: 13px; }
+.ml-list { top: 50px; gap: 8px; }
+.ml-card { padding: 8px 14px; font-size: 14px; line-height: 1.3; }
+.ml-h { font-size: 16px; margin-bottom: 2px; }
+.ml-reply { font-size: 15px; margin: 3px 0; }
+.ml-score { font-size: 13px; margin-top: 2px; }
+.vbox.filter { overflow: hidden; }
+.vbox.filter .vchip { font-size: 16px; letter-spacing: .02em; padding: 5px 10px; white-space: nowrap; max-width: 100%; overflow: hidden; text-overflow: ellipsis; }
+.vbox.filter .vr { font-size: 13px; max-height: 52px; }
+.mi-user { font-size: 13px; color: var(--ink-soft); }
+.mi-user.big { font-size: 16px; }
+.mi-card .mi-ex { max-height: 110px; }
+.mi-vote .kf-cur { min-height: 240px; }
+.kf-judge { font-size: 14px; color: var(--ink-soft); max-width: 560px; text-align: right; }
+.lt-left { position: absolute; left: 0; top: 0; width: 760px; display: flex; flex-direction: column; gap: 10px; }
+.lt-row { display: grid; grid-template-columns: 1fr 190px 130px; gap: 12px; align-items: center; background: #fff; border: 1px solid var(--rule); border-left: 8px solid var(--c); border-radius: 10px; padding: 10px 14px; }
+.lt-t b { font-family: var(--font-display); font-size: 17px; } .lt-t div { font-size: 13.5px; color: var(--ink-soft); margin-top: 2px; }
+.lt-bar { height: 26px; background: var(--paper); border-radius: 6px; overflow: hidden; } .lt-bar .ms-fill { background: var(--c); }
+.lt-n { font-size: 13px; } .lt-n b { font-family: var(--font-display); font-size: 20px; display: block; }
+.lt-foot { font-size: 13.5px; color: var(--ink-soft); line-height: 1.35; }
+.lt-right { position: absolute; left: 790px; top: 0; width: 682px; display: flex; flex-direction: column; gap: 6px; }
+.lt-tech { display: grid; grid-template-columns: 250px 1fr 76px; gap: 10px; align-items: center; background: #fff; border: 1px solid var(--rule); border-radius: 8px; padding: 6px 12px; font-size: 14px; }
+.lt-tl { font-weight: 600; } .lt-tb { height: 18px; background: var(--paper); border-radius: 5px; overflow: hidden; } .lt-tn { font-family: var(--font-code); font-size: 13px; text-align: right; }
+.ml-real { color: var(--teal-d); font-weight: 600; }

@@ -30,7 +30,12 @@
     S.memorize[item.id] = rec; save(); log(rec); emit();
     return rec;
   };
-  live.memorized = (id) => (S.memorize[id] ? { reply: S.memorize[id].reply, real: true, label: "real run · " + S.memorize[id].run } : window.L16_REPLAY && window.L16_REPLAY.memorize && window.L16_REPLAY.memorize[id] ? { reply: window.L16_REPLAY.memorize[id].reply, real: false, label: "written fallback" } : null);
+  live.memorized = (id) => {
+    if (S.memorize[id]) return { reply: S.memorize[id].reply, real: true, label: "real run · " + S.memorize[id].run };
+    const R = window.L16_REPLAY;
+    if (R && R.memorize && R.memorize[id]) return { reply: R.memorize[id].reply, real: !R.written, label: R.written ? "written fallback" : "rehearsal run" + (R.memorize[id].run ? " · " + R.memorize[id].run : "") };
+    return null;
+  };
 
   /* word-level comparison of a reply with the reference: how many leading words match, and the share of reference words present in order */
   live.compare = function (reply, reference) {

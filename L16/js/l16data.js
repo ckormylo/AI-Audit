@@ -94,7 +94,21 @@
     };
   }
 
-  const api = { scan, summarize, attribute, sourceJoin, misses, disagreements, detectorStats, findingText };
+  // Hits by L14 technique (plus the L15 benchmark): how many replies of each kind carried an identifier
+  function byTechnique(scanned) {
+    const order = [["flip", "Plain question (prompt flip)"], ["persona", "Persona / story"], ["multiturn", "Multi-turn escalation"], ["extraction", "Data extraction"], ["injection", "Direct injection"], ["indirect", "Indirect injection"], ["encoding", "Obfuscation"], ["benchmark", "Cooperative benchmark questions (L15)"]];
+    return order.map(([key, label]) => { const rows = scanned.filter((r) => r.technique === key); return { key, label, n: rows.length, k: rows.filter((r) => r.anyHit).length }; }).filter((t) => t.n);
+  }
+  // Scan one written reply (the voting set): the scanner only
+  function scanOne(bot) { return scan([{ id: "x", bot, judge: null, user: "" }])[0]; }
+  // Scanner precision and recall against the room's votes on the voting set
+  function voteStats(voteSet, votes) {
+    let tp = 0, fp = 0, fn = 0, tn = 0, n = 0;
+    for (const v of voteSet) { if (votes[v.id] == null) continue; n++; const hit = scanOne(v.bot).anyHit, t = votes[v.id]; if (hit && t) tp++; else if (hit && !t) fp++; else if (!hit && t) fn++; else tn++; }
+    return { n, tp, fp, fn, tn, precision: tp + fp ? tp / (tp + fp) : null, recall: tp + fn ? tp / (tp + fn) : null };
+  }
+
+  const api = { scan, summarize, attribute, sourceJoin, misses, disagreements, detectorStats, findingText, byTechnique, scanOne, voteStats };
   root.L16 = api;
   if (typeof module !== "undefined") module.exports = api;
 })(typeof window !== "undefined" ? window : globalThis);
