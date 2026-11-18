@@ -8,7 +8,7 @@ ITAO 40515 · Auditing AI · Fall 2026 · W 11/18 · the last lecture
 - Nothing is live and no model is needed. The deck plays the same anywhere.
 
 ## What is in it
-26 slides, 85 clicks, five parts: governance inside the organization (five layers and a test for each), shadow AI, people and accountability, effects outside the organization with the debate, and the course on one slide with Assignment 4.
+26 slides, 84 clicks, five parts: governance inside the organization (five layers and a test for each), shadow AI, people and accountability, effects outside the organization, and the course on one slide with Assignment 4. About 67 minutes by the notes. There is no room activity: the debate was removed on Nov 18 and slide 22 now states the two positions.
 
 Slides with motion: 5 (records matched against the inventory), 10 (survey bars), 14 (three reviewers), 15 (before and after bars), 16 (two lines), 17 (blame moving along the chain), 21 (timeline). Tables on 4, 13, 18, 20 and 25 fill in one row per click.
 

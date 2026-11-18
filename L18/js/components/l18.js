@@ -456,10 +456,10 @@
 
   /* ---------- the debate: a motion, two positions, the format ---------- */
   Deck.components.Debate = {
-    steps: 3,
+    steps(fm) { return 2 + ((fm.step || []).length ? 1 : 0); },
     mount(host, ctx) {
       const fm = ctx.fm;
-      host.appendChild(h("div", { class: "db-motion" }, h("div", { class: "db-lab" }, "The motion"), h("div", { class: "db-text" }, "“" + (fm.motion || "") + "”")));
+      host.appendChild(h("div", { class: "db-motion" }, h("div", { class: "db-lab" }, fm.lab || "The motion"), h("div", { class: "db-text" }, fm.lab ? (fm.motion || "") : "“" + (fm.motion || "") + "”")));
       const row = h("div", { class: "db-row" }); host.appendChild(row);
       const pos = (fm.pos || []).map((l, i) => { const [t, b] = parts(l, 2); const el = h("div", { class: "db-pos show-on off-up " + (i ? "b" : "a") }, h("div", { class: "db-h" }, t), h("div", { class: "db-b", html: Deck.inline(b) })); row.appendChild(el); return el; });
       const steps = h("div", { class: "db-format show-on off-up" });

@@ -37,11 +37,11 @@ component: Agenda
 row[]: 1 | Governance inside the organization | Five layers of AI governance, and the audit test for each. | cobalt
 row[]: 2 | Shadow AI | AI used for work without approval. How common it is, why it happens, and how to write the finding. | marigold
 row[]: 3 | People and accountability | Whether human review is real, what happens to skills, and who answers when an AI system fails. | violet
-row[]: 4 | Effects outside the organization | Four effects on people outside, how they come back as costs, and the debate. | vermilion
+row[]: 4 | Effects outside the organization | Four effects on people outside, how they come back as costs, and whether an audit should weigh them. | vermilion
 row[]: 5 | The course on one slide | Five habits that carry over, and Assignment 4. | magenta
 ---
 Notes:
-**1:00.** One minute. Five parts. The debate is in part 4 and takes ten minutes. Two things to be able to do by the end: name the five layers of governance with a test for each, and say what evidence shows that human review and accountability are real.
+**1:00.** One minute. Five parts. Two things to be able to do by the end: name the five layers of governance with a test for each, and say what evidence shows that human review and accountability are real.
 
 ---
 id: monday
@@ -482,28 +482,24 @@ Click 2: A second route starts with an event.
 Click 3: Four months later the event is a lawsuit.
 Click 4: The cost arrives after the harm. An auditor who looks only at today's rules and today's risk list will miss it.
 Notes:
-**55:30. About 2.5 minutes.** Two routes on one timeline: regulation (blue) and an incident that becomes a lawsuit (yellow, then red). The dates are evenly spaced, not to scale. This slide is the evidence for one side of the debate, so go straight to the motion.
+**55:30. About 2.5 minutes.** Two routes on one timeline: regulation (blue) and an incident that becomes a lawsuit (yellow, then red). The dates are evenly spaced, not to scale. This slide is the argument behind one of the two positions on the next slide.
 
 ---
-id: debate
-kicker: Part 4 · The debate
-title: The debate
+id: scope
+kicker: Part 4 · Effects outside the organization
+title: Two positions on the auditor's scope
 bloom: vermilion
 component: Debate
-motion: An internal auditor's opinion on an AI system should weigh harm to people outside the organization, even when no law or policy requires it.
-pos[]: Against: stay in the mandate | Internal audit serves the organization through its board. Lecture 2: without criteria there is no opinion. An auditor who applies a personal standard of social good loses the credibility that makes management act on findings.
-pos[]: For: outside harm comes back | The last slide: outside harm returns as lawsuits, regulation and lost trust. An auditor who ignores it is giving assurance on last year's risks.
-step[]: 2 minutes | Prepare with your half of the room
-step[]: 3 speakers a side | 45 seconds each, alternating
-step[]: 1 reply a side | 30 seconds
-step[]: Show of hands | Vote your own view
+lab: The question
+motion: Should an internal auditor's opinion on an AI system weigh harm to people outside the organization, even when no law or policy requires it?
+pos[]: No: stay in the mandate | Internal audit serves the organization through its board. Lecture 2: without criteria there is no opinion. An auditor who applies a personal standard of social good loses the credibility that makes management act on findings.
+pos[]: Yes: outside harm comes back | The last slide: outside harm returns as lawsuits, regulation and lost trust. An auditor who ignores it is giving assurance on last year's risks.
 ---
-Click 0: The motion. The left half of the room argues against it. The right half argues for it.
-Click 1: The case against.
-Click 2: The case for.
-Click 3: Two minutes to prepare, starting now.
+Click 0: Auditors disagree about this question. There are two positions, and each has a real argument.
+Click 1: The first position.
+Click 2: The second position.
 Notes:
-**58:00. 10 minutes.** Assign sides by half of the room, not by preference. Two minutes to prepare. Three speakers a side at 45 seconds each, alternating, against first. One 30-second reply a side. Then a show of hands on each person's own view. Keep time out loud. This is the participation item named in the syllabus.
+**58:00. About 2 minutes.** No room activity. Read the question, then give each position the same weight. Do not say which is right. The next slide gives the working answer.
 
 ---
 id: lands
@@ -520,9 +516,9 @@ card[]: Ability to keep operating | Could a regulator, a court or a partner stop
 foot: **Risk-based scope:** harm outside the organization enters the audit when it maps to one of these four. The auditor's own judgment shows in what they escalate and how hard they press. There is no single right answer. | 2
 ---
 Click 1: The working answer in practice is to translate outside harm into organizational risk, using four questions.
-Click 2: That answer takes something from each side of the debate, and it leaves the auditor a decision about what to escalate.
+Click 2: That answer takes something from each of the two positions, and it leaves the auditor a decision about what to escalate.
 Notes:
-**68:00. About 2 minutes.** Do not announce a winner. The profession's working answer keeps the mandate (the against side) and brings outside harm in through risk (the for side). Say that reasonable auditors land in different places on what to escalate.
+**60:00. About 2 minutes.** The profession's working answer keeps the mandate (the first position) and brings outside harm in through risk (the second position). Say that reasonable auditors land in different places on what to escalate.
 
 ---
 id: course
@@ -543,7 +539,7 @@ Click 2: Then models that predict, and models that generate.
 Click 3: Then a system that acts, and today the organization around it.
 Click 4: Six different things were audited with one chain.
 Notes:
-**70:00. About 2 minutes.** Two cards per click. Name one thing from each stage that the room will remember: MiDAS, Northgate, the five screeners, MrFeast AI, the message board, today's lawsuit.
+**62:00. About 2 minutes.** Two cards per click. Name one thing from each stage that the room will remember: MiDAS, Northgate, the five screeners, MrFeast AI, the message board, today's lawsuit.
 
 ---
 id: habits
@@ -564,7 +560,7 @@ The technology will change. These five habits are what carries over to the next 
 | **Check your own instrument** | The judge, the filter, the detectors, the scanner, and today the surveys |
 | **Put your name on a judgment** | The overall opinion in Assignment 4 and in your team's final report |
 Notes:
-**72:00. About 1.5 minutes.** One click per habit, one sentence each. These are the same five sentences every unit taught on a different system.
+**64:00. About 1.5 minutes.** One click per habit, one sentence each. These are the same five sentences every unit taught on a different system.
 
 ---
 id: a4
@@ -581,4 +577,4 @@ bloom: magenta
 
 Click 0: One claim about an AI system that you will not accept again without evidence. Decide what yours is, and what evidence you would ask for.
 Notes:
-**73:30. To 75:00.** Read the due date and the report requirements from the handout. Then the calendar. End on the caption: each student leaves with one claim they will no longer accept without evidence.
+**65:30. To 67:00.** Read the due date and the report requirements from the handout. Then the calendar. End on the caption: each student leaves with one claim they will no longer accept without evidence.
